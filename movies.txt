@@ -1,0 +1,31 @@
+--download data set
+http://files.grouplens.org/datasets/movielens/ml-100k.zip
+
+--log in under root
+mysql -u root -p
+password: hortonworks1
+
+--create user & grant access
+CREATE USER '<username>'@'localhost';
+GRANT ALL ON *.* TO '<username>'@'localhost';
+
+--create database
+CREATE DATABASE movielens;
+
+--use database
+USE movielens;
+
+--create table
+CREATE TABLE movies(
+user_id INT,
+item_id INT,
+rating INT,
+time INT
+);
+
+LOAD DATA LOCAL INFILE '/home/maria_dev/movielens/ml-100k/u.data' INTO TABLE movies;
+
+sqoop import --connect jdbc:mysql://localhost:3306/movielens --username maria_dev --table movies --hive-import --hive-table movielens.movies -m 1 --driver com.mysql.jdbc.Driver
+
+*** Alternative Command ***
+sqoop import --connect jdbc:mysql://localhost:3306/movielens --username maria_dev --table movies --target-dir /data/movielens --hive-import --hive-table movielens.movies -m 1 --driver com.mysql.jdbc.Driver
